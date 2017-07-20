@@ -1,0 +1,94 @@
+---
+version: '2.0'
+
+default.janog40:
+  input:
+    - hit
+  tasks:
+    LED:
+      # [585, 128]
+      action: core.http
+      input:
+        url: 'http://zaku/'
+        method: 'POST'
+        body: 'led_<% $.hit %>'
+      on-success:
+        - head: <% $.hit = 'head' %>
+        - body: <% $.hit = 'body' %>
+        - leg: <% $.hit = 'leg' %>
+      on-error:
+        - ERROR
+    head:
+      action: core.http
+      input:
+        url: 'http://zaku/'
+        method: 'POST'
+        body: 'raifuru'
+      on-success:
+        - head2
+      on-error:
+        - ERROR
+    head2:
+      action: core.http
+      input:
+        url: 'http://zaku/'
+        method: 'POST'
+        body: 'zaku_yarare'
+      on-success:
+        - ToSlack
+      on-error:
+        - ERROR
+    body:
+      action: core.http
+      input:
+        url: 'http://zaku'
+        method: 'POST'
+        body: 'mada'
+      on-success:
+        - body2
+      on-error:
+        - ERROR
+    body2:
+      action: core.http
+      input:
+        url: 'http://zaku/'
+        method: 'POST'
+        body: 'cm'
+      on-success:
+        - ToSlack
+      on-error:
+        - ERROR
+    leg:
+      action: core.http
+      input:
+        url: 'http://zaku'
+        method: 'POST'
+        body: 'keikoku'
+      on-success:
+        - leg2
+      on-error:
+        - ERROR
+    leg2:
+      action: core.http
+      input:
+        url: 'http://zaku/'
+        method: 'POST'
+        body: 'naniyattenno'
+      on-success:
+        - ToSlack
+      on-error:
+        - ERROR
+    ToSlack:
+      # [105, 526]
+      action: slack.chat.postMessage
+      input:
+        channel: test
+        text: "Hit <% $.hit %> !!\n "
+      on-error:
+        - ERROR
+    ERROR:
+      # [625, 638]
+      action: slack.chat.postMessage
+      input:
+        channel: test
+        text: "Error!!"
