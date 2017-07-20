@@ -1,0 +1,78 @@
+import json
+import wiringpi as pi
+import time
+import os
+from pygame import mixer as mi
+import random
+
+def zaku():
+    print("zaku")
+    return
+
+def init():
+    pi.wiringPiSetupGpio()
+
+def led(cmd):
+    blink_time = 1
+    i = 1
+    if cmd == None:
+        LED_PIN = 4
+    elif cmd == 'leg':
+        LED_PIN = 23
+        i = 290
+    elif cmd == 'body':
+        LED_PIN = 17
+        i = 290
+    elif cmd == 'head':
+        LED_PIN = 4
+        i = 290
+    elif cmd == 'ready':
+        LED_PIN = 4
+        blink_time = 0.1
+        i = 290
+    pi.pinMode(LED_PIN, pi.OUTPUT)
+
+    while blink_time > 0.13:
+        pi.digitalWrite( LED_PIN, pi.HIGH )
+        time.sleep(blink_time)
+        pi.digitalWrite( LED_PIN, pi.LOW )
+        time.sleep(blink_time)
+        blink_time = blink_time * 0.8
+    for i in range(300) :
+        blink_time = 0.02
+        pi.digitalWrite( LED_PIN, pi.HIGH )
+        time.sleep(blink_time)
+        pi.digitalWrite( LED_PIN, pi.LOW )
+        time.sleep(blink_time)
+        i = i + 1
+
+
+def voice(cmd):
+    mp3_path = '/home/pi/sound'
+    files = os.listdir(mp3_path)
+    mi.init()
+    if cmd == 'effect':
+        mi.music.load(mp3_path+'/koukaon_kamehameha.mp3')
+    elif cmd == 'gundam_kido':
+        mi.music.load('/home/pi/gundam/gundam_kido.wav')
+    elif cmd == 'tobe':
+        mi.music.load('/home/pi/gundam/gundam_tobe.mp3')
+    elif cmd == 'raifuru':
+        mi.music.load('/home/pi/gundam/gundam_raifuru.wav')
+    elif cmd == 'zaku_yarare':
+        mi.music.load('/home/pi/gundam/zaku_yarare.wav')
+    elif cmd == 'mada':
+        mi.music.load('/home/pi/gundam/mada_owaranyo.wav')
+    elif cmd == 'cm':
+        mi.music.load('/home/pi/gundam/cm_hasami.wav')
+    elif cmd == 'keikoku':
+        mi.music.load('/home/pi/gundam/keikoku.wav')
+    elif cmd == 'naniyattenno':
+        mi.music.load('/home/pi/gundam/naniyattenno.wav')
+    else:
+        mi.music.load(mp3_path+'/'+random.choice(files))
+    mi.music.play()
+
+
+if __name__=="__main__":
+    goku()
