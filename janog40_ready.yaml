@@ -1,0 +1,47 @@
+---
+version: '2.0'
+
+default.janog40_ready:
+  tasks:
+    sensor_start:
+    # [105, 26]
+      action: core.remote_sudo
+      input:
+        cmd: "systemctl restart interop2017"
+        hosts: "192.168.1.219"
+        password: "interop2017"
+        username: "pi"
+      on-success:
+        - ready_message
+    ready_message:
+      # [105, 128]
+      action: slack.chat.postMessage
+      input:
+        channel: random
+        text: "Gundam Ready !!!"
+      on-success:
+        - gundam_ready
+        - led_ready
+    gundam_ready:
+      # [105, 230]
+      action: core.http
+      input:
+        method: "POST"
+        body: "gundam_kido"
+        url: "http://zaku/"
+      on-success:
+        - gundam_tobe
+    gundam_tobe:
+      action: core.http
+      input:
+        method: "POST"
+        body: "tobe"
+        url: "http://zaku/"
+      on-success:
+    led_ready:
+      # [105, 332]
+      action: core.http
+      input:
+        method: "POST"
+        body: "led_ready"
+        url: "http://192.168.1.210/"
